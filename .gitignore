@@ -1,0 +1,11 @@
+node_modules/
+e2e/shots/
+backend/vendor/
+backend/.env
+backend/storage/*.key
+backend/public/storage
+backend/public/assets/
+backend/public/spa.html
+backend/public/sw.js
+backend/public/workbox-*.js
+backend/public/manifest.webmanifest

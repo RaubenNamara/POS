@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+/* Design tokens. Coffee brown accent (#6F4E37), neutral greys, system fonts (no web-font download). */
+@theme {
+  --color-brand-50: #f8f3ef;
+  --color-brand-100: #efe4db;
+  --color-brand-200: #dcc6b4;
+  --color-brand-500: #8b6448;
+  --color-brand-600: #6f4e37;
+  --color-brand-700: #5a3e2b;
+  --color-brand-800: #43301f;
+  --color-ink: #1f2937;
+  --color-muted: #6b7280;
+  --color-line: #e5e7eb;
+  --color-page: #f4f4f5;
+  --color-ok: #15803d;
+  --color-warn: #b45309;
+  --color-bad: #b91c1c;
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius-card: 0.75rem;
+}
+
+/* Large monitors (27" and up, 4K): every size in the app is in rem, so raising the root
+   font size scales text, spacing and cards together instead of leaving a narrow strip. */
+@media (min-width: 1800px) { html { font-size: 17px; } }
+@media (min-width: 2300px) { html { font-size: 19px; } }
+@media (min-width: 3000px) { html { font-size: 22px; } }
+@media (min-width: 3600px) { html { font-size: 26px; } }
+
+/* Page width for the storefront: comfortable on laptops, much wider on big monitors. */
+@utility shell {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: 0.75rem;
+  max-width: 80rem;
+  @media (min-width: 640px) { padding-inline: 1rem; }
+  @media (min-width: 1536px) { max-width: 92rem; }
+  @media (min-width: 2300px) { max-width: 110rem; }
+}
+
+@layer base {
+  html { -webkit-tap-highlight-color: transparent; }
+  body { @apply bg-page text-ink antialiased; }
+  button, [role="button"] { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--color-brand-600); outline-offset: 2px; }
+  input, select, textarea { font-size: max(16px, 1rem); } /* no iOS zoom-on-focus */
+}
+
+/* Buttons are utilities (not component classes) so variants compose with @apply in Tailwind 4. */
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 h-10 text-sm font-semibold whitespace-nowrap transition-[background-color,border-color,box-shadow,transform] duration-150 active:scale-[0.98] disabled:opacity-45 disabled:pointer-events-none; }
+@utility btn-primary { @apply btn bg-brand-600 text-white shadow-[0_1px_2px_rgb(0_0_0/0.12),inset_0_1px_0_rgb(255_255_255/0.12)] hover:bg-brand-700 active:bg-brand-800; }
+@utility btn-outline { @apply btn border border-gray-200 bg-white text-ink shadow-[0_1px_2px_rgb(16_24_40/0.05)] hover:bg-gray-50 hover:border-gray-300; }
+@utility btn-ghost { @apply btn text-ink hover:bg-gray-100; }
+@utility btn-danger { @apply btn bg-bad text-white shadow-[0_1px_2px_rgb(0_0_0/0.12)] hover:bg-red-800; }
+@utility btn-sm { @apply h-8 px-3 text-xs rounded-md; }
+
+@layer components {
+  .input {
+    @apply w-full h-11 sm:h-10 rounded-lg border border-gray-200 bg-white px-3 text-base sm:text-sm text-ink outline-none
+      shadow-[0_1px_2px_rgb(16_24_40/0.04)] transition-[border-color,box-shadow] duration-150 placeholder:text-gray-400
+      hover:border-gray-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 disabled:bg-gray-50 disabled:text-muted;
+  }
+  textarea.input { @apply h-auto py-2.5; }
+  /* Selects: a clean chevron instead of the browser's arrow. */
+  select.input {
+    @apply appearance-none pr-9 bg-no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.65rem center; background-size: 1rem;
+  }
+  .label { @apply block text-[13px] font-medium text-gray-700 mb-1.5; }
+  input[type="checkbox"], input[type="radio"] { accent-color: var(--color-brand-600); width: 1rem; height: 1rem; }
+  .card { @apply bg-white rounded-card border border-line shadow-[0_1px_2px_rgb(16_24_40/0.04)]; }
+  .badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold leading-5 whitespace-nowrap; }
+  .tbl { @apply w-full text-sm; }
+  /* A wide table scrolls inside its own card on small screens instead of pushing the page sideways. */
+  .card:has(> .tbl), .card:has(> table) { overflow-x: auto; }
+  .tbl td, .tbl th { @apply whitespace-nowrap; }
+  .tbl td.wrap { white-space: normal; }
+  .tbl th { @apply text-left text-[11px] font-semibold text-muted uppercase tracking-wider px-4 py-2.5 bg-gray-50/80 border-b border-line whitespace-nowrap; }
+  .tbl td { @apply px-4 py-2.5 border-b border-line/70 align-middle; }
+  .tbl tbody tr:hover td { @apply bg-gray-50/70; }
+  .tbl tbody tr:last-child td { @apply border-b-0; }
+  .num { font-variant-numeric: tabular-nums; @apply text-right whitespace-nowrap; }
+}
+
+/* Skeleton shimmer kept to opacity only (compositor-friendly, no layout work). */
+@keyframes pulse-soft { 50% { opacity: .55 } }
+.skeleton { background: #e5e7eb; border-radius: .375rem; animation: pulse-soft 1.4s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none } }
+/* Long numbers/words never force a card wider than the screen. */
+.card, .card * { overflow-wrap: anywhere; }
+.card .num, .card .tbl * { overflow-wrap: normal; }
